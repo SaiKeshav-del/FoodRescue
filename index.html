@@ -1,0 +1,2413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoodRescue | Rescue Food. Reduce Waste. Feed Communities.</title>
+  
+  <!-- Tailwind CSS & Font -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons & Canvas Confetti -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            },
+            cream: {
+              50: '#fdfbf7',
+              100: '#f8f5ee',
+              200: '#f0ebd8',
+              300: '#e4dcbe',
+            },
+            accent: {
+              orange: '#f97316',
+              amber: '#f59e0b',
+              red: '#ef4444'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #FDFBF7;
+      color: #1c1917;
+      scroll-behavior: smooth;
+    }
+    .glass-nav {
+      background: rgba(253, 251, 247, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #059669;
+      border-radius: 4px;
+    }
+    .badge-pulse {
+      animation: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.03); }
+    }
+    .map-pin {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .map-pin:hover {
+      transform: translateY(-6px) scale(1.15);
+      z-index: 30;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- ================= TOP NOTICE BAR ================= -->
+  <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-brand-900 text-white text-xs py-2 px-4 text-center font-medium flex items-center justify-center space-x-2">
+    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent-orange text-white">LIVE</span>
+    <span>⚡ Over <strong>14,850+ meals</strong> rescued across Bengaluru, Mumbai & Delhi this month!</span>
+    <span class="hidden md:inline text-brand-300">|</span>
+    <span class="hidden md:inline text-brand-200">Save up to 75% on fresh surplus food daily.</span>
+  </div>
+
+  <!-- ================= STICKY HEADER ================= -->
+  <header class="sticky top-0 z-40 glass-nav border-b border-stone-200/80 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo -->
+        <a href="#" onclick="navigateTo('landing')" class="flex items-center gap-3 group">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
+            <i data-lucide="leaf" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-2xl font-extrabold tracking-tight text-stone-900">Food<span class="text-brand-600">Rescue</span></span>
+              <span class="text-[10px] uppercase tracking-wider font-bold bg-brand-100 text-brand-800 px-1.5 py-0.5 rounded">IN</span>
+            </div>
+            <p class="text-[11px] text-stone-500 font-medium">Rescue Food • Reduce Waste</p>
+          </div>
+        </a>
+
+        <!-- Main Navigation Links -->
+        <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+          <button onclick="navigateTo('landing')" id="nav-landing" class="nav-item px-3.5 py-2 rounded-xl text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 transition">Home</button>
+          <button onclick="navigateTo('browse')" id="nav-browse" class="nav-item px-3.5 py-2 rounded-xl text-sm font-medium text-stone-600 hover:text-brand-600 hover:bg-stone-100 transition flex items-center gap-1.5">
+            <i data-lucide="utensils" class="w-4 h-4 text-brand-500"></i>
+            <span>Browse Food</span>
+            <span class="bg-accent-orange text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">New</span>
+          </button>
+          <button onclick="navigateTo('how-it-works')" class="nav-item px-3.5 py-2 rounded-xl text-sm font-medium text-stone-600 hover:text-brand-600 hover:bg-stone-100 transition">How It Works</button>
+          <button onclick="navigateTo('impact')" class="nav-item px-3.5 py-2 rounded-xl text-sm font-medium text-stone-600 hover:text-brand-600 hover:bg-stone-100 transition">Impact</button>
+        </nav>
+
+        <!-- Right Side Actions & Role Switcher -->
+        <div class="flex items-center gap-3">
+          
+          <!-- Role Quick Switcher Badge -->
+          <div class="relative hidden sm:block">
+            <div class="flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200 text-xs font-semibold">
+              <span class="text-stone-400 px-2 flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5"></i> Role:</span>
+              <button onclick="switchRole('customer')" id="role-btn-customer" class="px-2.5 py-1 rounded-lg transition bg-white text-brand-700 shadow-sm">Citizen</button>
+              <button onclick="switchRole('business')" id="role-btn-business" class="px-2.5 py-1 rounded-lg transition text-stone-600 hover:text-stone-900">Partner</button>
+              <button onclick="switchRole('ngo')" id="role-btn-ngo" class="px-2.5 py-1 rounded-lg transition text-stone-600 hover:text-stone-900">NGO</button>
+              <button onclick="switchRole('admin')" id="role-btn-admin" class="px-2.5 py-1 rounded-lg transition text-stone-600 hover:text-stone-900">Admin</button>
+            </div>
+          </div>
+
+          <!-- Active Dashboard Shortcut -->
+          <button onclick="openCurrentDashboard()" id="dashboard-header-btn" class="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-brand-600/20 transition hover:shadow-lg">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span id="dashboard-header-label">My Rescues</span>
+            <span id="active-res-badge" class="hidden bg-white text-brand-700 text-xs font-black px-1.5 py-0.5 rounded-full">0</span>
+          </button>
+
+          <!-- Post Food Shortcut (for businesses) -->
+          <button onclick="switchRole('business'); navigateTo('restaurant-dashboard'); openPostFoodModal();" class="hidden lg:flex items-center gap-1.5 bg-amber-50 border border-amber-300 text-amber-900 hover:bg-amber-100 px-3 py-2 rounded-xl text-xs font-bold transition">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-amber-600"></i>
+            <span>Post Surplus</span>
+          </button>
+
+          <!-- Mobile Menu Toggle -->
+          <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-stone-600 hover:bg-stone-100">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-stone-200 bg-white/95 px-4 pt-3 pb-5 space-y-2">
+      <button onclick="navigateTo('landing'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-stone-700 font-medium hover:bg-stone-100">Home</button>
+      <button onclick="navigateTo('browse'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-stone-700 font-medium hover:bg-stone-100">Browse Food</button>
+      <button onclick="navigateTo('how-it-works'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-stone-700 font-medium hover:bg-stone-100">How It Works</button>
+      <button onclick="navigateTo('impact'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-stone-700 font-medium hover:bg-stone-100">Our Impact</button>
+      <div class="pt-2 border-t border-stone-100">
+        <p class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Switch Demo Persona</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="switchRole('customer'); toggleMobileMenu()" class="p-2 bg-stone-100 rounded-lg text-xs font-bold text-center">Citizen User</button>
+          <button onclick="switchRole('business'); toggleMobileMenu()" class="p-2 bg-stone-100 rounded-lg text-xs font-bold text-center">Restaurant Manager</button>
+          <button onclick="switchRole('ngo'); toggleMobileMenu()" class="p-2 bg-stone-100 rounded-lg text-xs font-bold text-center">NGO Volunteer</button>
+          <button onclick="switchRole('admin'); toggleMobileMenu()" class="p-2 bg-stone-100 rounded-lg text-xs font-bold text-center">Platform Admin</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main id="app-container" class="flex-grow">
+    
+    <!-- PAGE 1: LANDING PAGE -->
+    <section id="page-landing" class="page-view space-y-20 pb-20">
+      
+      <!-- Hero Section -->
+      <div class="relative overflow-hidden pt-12 pb-20 lg:pt-16 lg:pb-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Left Hero Content -->
+            <div class="lg:col-span-7 space-y-8">
+              
+              <div class="inline-flex items-center gap-2 bg-brand-100 border border-brand-200/80 px-3.5 py-1.5 rounded-full text-xs font-bold text-brand-800 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+                <span>India's #1 Hyperlocal Food Rescue Network</span>
+              </div>
+
+              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-stone-900 leading-[1.12]">
+                Rescue Delicious Food. <br class="hidden sm:inline" />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-brand-500 to-emerald-700">Save 70%+ Daily.</span> <br />
+                Feed Communities.
+              </h1>
+
+              <p class="text-lg text-stone-600 max-w-2xl leading-relaxed">
+                Connect with top local bakeries, restaurants, hotels, and supermarkets in your neighborhood. Rescue surprise meal packs and freshly prepared surplus at unbelievable prices before closing time.
+              </p>
+
+              <!-- Search Bar & Location Selector -->
+              <div class="bg-white p-3 rounded-2xl shadow-xl shadow-stone-200/60 border border-stone-200 flex flex-col sm:flex-row items-center gap-2 max-w-2xl">
+                
+                <!-- City Selector -->
+                <div class="flex items-center gap-2 px-3 py-2 w-full sm:w-auto border-b sm:border-b-0 sm:border-r border-stone-200">
+                  <i data-lucide="map-pin" class="w-5 h-5 text-brand-600"></i>
+                  <select id="hero-city-select" onchange="handleCityFilter(this.value)" class="bg-transparent text-stone-800 text-sm font-bold focus:outline-none cursor-pointer">
+                    <option value="Bengaluru">Bengaluru</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Delhi-NCR">Delhi-NCR</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Pune">Pune</option>
+                  </select>
+                </div>
+
+                <!-- Food Search Input -->
+                <div class="flex items-center gap-2 px-3 py-2 flex-grow w-full">
+                  <i data-lucide="search" class="w-5 h-5 text-stone-400"></i>
+                  <input type="text" id="hero-search-input" placeholder="Search biryani, sourdough, pastries, thalis..." class="w-full bg-transparent text-sm text-stone-800 placeholder-stone-400 focus:outline-none" onkeyup="if(event.key === 'Enter') handleHeroSearch()" />
+                </div>
+
+                <!-- Search CTA Button -->
+                <button onclick="handleHeroSearch()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-brand-600/20">
+                  <span>Explore</span>
+                  <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <!-- Popular Quick Searches -->
+              <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-stone-500">
+                <span>Trending Searches:</span>
+                <button onclick="quickFilterCategory('Bakery')" class="bg-white hover:bg-brand-50 hover:text-brand-700 text-stone-700 px-3 py-1.5 rounded-lg border border-stone-200 transition">🥐 Artisanal Bakery</button>
+                <button onclick="quickFilterCategory('Meals')" class="bg-white hover:bg-brand-50 hover:text-brand-700 text-stone-700 px-3 py-1.5 rounded-lg border border-stone-200 transition">🍛 Royal Thali Sets</button>
+                <button onclick="quickFilterCategory('Desserts')" class="bg-white hover:bg-brand-50 hover:text-brand-700 text-stone-700 px-3 py-1.5 rounded-lg border border-stone-200 transition">🍰 Gourmet Pastries</button>
+                <button onclick="quickFilterCategory('NGO Bulk')" class="bg-brand-50 hover:bg-brand-100 text-brand-800 px-3 py-1.5 rounded-lg border border-brand-200 transition">🤝 ₹0 NGO Bulk</button>
+              </div>
+
+              <!-- Live Aggregate Counters -->
+              <div class="grid grid-cols-3 gap-4 pt-4 border-t border-stone-200/80 max-w-xl">
+                <div>
+                  <div class="text-2xl sm:text-3xl font-extrabold text-stone-900" id="hero-meals-counter">14,850+</div>
+                  <div class="text-xs text-stone-500 font-medium">Meals Rescued</div>
+                </div>
+                <div>
+                  <div class="text-2xl sm:text-3xl font-extrabold text-brand-600" id="hero-money-counter">₹31.4 Lakhs</div>
+                  <div class="text-xs text-stone-500 font-medium">Citizen Savings</div>
+                </div>
+                <div>
+                  <div class="text-2xl sm:text-3xl font-extrabold text-stone-900" id="hero-co2-counter">37.2 Tons</div>
+                  <div class="text-xs text-stone-500 font-medium">CO₂ Prevented</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Hero Interactive Visual Card -->
+            <div class="lg:col-span-5">
+              <div class="relative">
+                
+                <!-- Glowing Backdrop Gradient -->
+                <div class="absolute -top-6 -right-6 w-72 h-72 bg-brand-300 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+                <div class="absolute -bottom-6 -left-6 w-72 h-72 bg-amber-300 rounded-full blur-3xl opacity-30"></div>
+
+                <!-- Main Hero Showcase Card -->
+                <div class="relative bg-white rounded-3xl p-5 shadow-2xl border border-stone-200 overflow-hidden group">
+                  <div class="relative h-64 rounded-2xl overflow-hidden mb-4">
+                    <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80" alt="Royal Biryani Feast" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-stone-900 flex items-center gap-1 shadow">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span>Verified Fresh</span>
+                    </div>
+
+                    <div class="absolute top-3 right-3 bg-accent-orange text-white font-extrabold text-xs px-3 py-1 rounded-full shadow-lg badge-pulse">
+                      Save 69% OFF
+                    </div>
+
+                    <div class="absolute bottom-3 left-3 right-3 bg-black/60 backdrop-blur-md p-2.5 rounded-xl text-white flex items-center justify-between text-xs font-medium">
+                      <div class="flex items-center gap-1.5">
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+                        <span>Pickup: <strong>8:30 PM - 10:00 PM</strong></span>
+                      </div>
+                      <span class="text-amber-300 font-bold">Only 3 Left!</span>
+                    </div>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg">Royal Biryani House • Indiranagar</span>
+                      <div class="flex items-center gap-1 text-amber-500 text-xs font-bold">
+                        <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                        <span>4.9 (184)</span>
+                      </div>
+                    </div>
+
+                    <h3 class="text-lg font-bold text-stone-900">Handi Dum Paneer Biryani Surplus Bag</h3>
+                    <p class="text-xs text-stone-500 line-clamp-2">Freshly cooked evening batch with burani raita and gulab jamun in eco-friendly container.</p>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-stone-100">
+                      <div>
+                        <span class="text-2xl font-black text-brand-700">₹99</span>
+                        <span class="text-xs text-stone-400 line-through ml-1.5">₹320</span>
+                      </div>
+                      <button onclick="openQuickReserve('item-1')" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-md shadow-brand-600/20 flex items-center gap-1.5">
+                        <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                        <span>Reserve Now</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Floating Micro Badge 1 -->
+                <div class="absolute -bottom-4 -left-4 bg-white p-3 rounded-2xl shadow-xl border border-stone-100 flex items-center gap-3 hidden sm:flex">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="text-xs font-bold text-stone-900">FSSAI Hygiene Verified</div>
+                    <div class="text-[11px] text-stone-500">100% Safe & Sealed</div>
+                  </div>
+                </div>
+
+                <!-- Floating Micro Badge 2 -->
+                <div class="absolute -top-4 -right-4 bg-white p-3 rounded-2xl shadow-xl border border-stone-100 flex items-center gap-3 hidden sm:flex">
+                  <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                    <i data-lucide="sprout" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="text-xs font-bold text-stone-900">1.8 kg CO₂ Diverted</div>
+                    <div class="text-[11px] text-stone-500">Per meal rescued</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- FLASH SURPLUS DEALS CAROUSEL -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-accent-red animate-ping"></span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-stone-900">Expiring Soon • Flash Surplus</h2>
+            </div>
+            <p class="text-sm text-stone-500 mt-1">Grab these fresh surplus bundles before pickup windows close tonight</p>
+          </div>
+          <button onclick="navigateTo('browse')" class="text-brand-700 hover:text-brand-800 font-bold text-sm flex items-center gap-1">
+            <span>View All</span>
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div id="flash-deals-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Dynamic Items Rendered Here -->
+        </div>
+      </div>
+
+      <!-- HOW IT WORKS INTERACTIVE SECTION -->
+      <div id="section-how-it-works" class="bg-white py-16 border-y border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs font-bold text-brand-700 uppercase tracking-wider bg-brand-50 px-3 py-1 rounded-full">Simple 3-Step Process</span>
+            <h2 class="text-3xl font-extrabold text-stone-900 mt-3">How FoodRescue Works</h2>
+            <p class="text-stone-600 text-sm mt-2">Whether you're a food lover or a business looking to eliminate waste, our circular food network makes it frictionless.</p>
+            
+            <!-- Persona Switch Tabs -->
+            <div class="inline-flex p-1 bg-stone-100 rounded-xl mt-6">
+              <button onclick="setHowItWorksTab('citizens')" id="hiw-tab-citizens" class="px-5 py-2 rounded-lg text-xs font-bold bg-white text-brand-700 shadow-sm transition">For Food Lovers</button>
+              <button onclick="setHowItWorksTab('businesses')" id="hiw-tab-businesses" class="px-5 py-2 rounded-lg text-xs font-bold text-stone-600 hover:text-stone-900 transition">For Food Businesses & NGOs</button>
+            </div>
+          </div>
+
+          <!-- Citizen Flow Steps -->
+          <div id="hiw-content-citizens" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-cream-50 p-8 rounded-3xl border border-stone-200/70 hover:shadow-lg transition">
+              <div class="w-14 h-14 rounded-2xl bg-brand-600 text-white flex items-center justify-center text-xl font-black mb-6 shadow-md shadow-brand-600/20">
+                1
+              </div>
+              <h3 class="text-xl font-bold text-stone-900 mb-2">Discover Nearby Surplus</h3>
+              <p class="text-sm text-stone-600 leading-relaxed">Open the map or browse nearby restaurants, bakeries, and supermarkets with surplus food bags at 60-80% discounts.</p>
+            </div>
+
+            <div class="bg-cream-50 p-8 rounded-3xl border border-stone-200/70 hover:shadow-lg transition">
+              <div class="w-14 h-14 rounded-2xl bg-brand-600 text-white flex items-center justify-center text-xl font-black mb-6 shadow-md shadow-brand-600/20">
+                2
+              </div>
+              <h3 class="text-xl font-bold text-stone-900 mb-2">Reserve & Get QR Pass</h3>
+              <p class="text-sm text-stone-600 leading-relaxed">Select your portions, lock your reservation in seconds, and receive an instant digital receipt with a secure QR pickup code.</p>
+            </div>
+
+            <div class="bg-cream-50 p-8 rounded-3xl border border-stone-200/70 hover:shadow-lg transition">
+              <div class="w-14 h-14 rounded-2xl bg-brand-600 text-white flex items-center justify-center text-xl font-black mb-6 shadow-md shadow-brand-600/20">
+                3
+              </div>
+              <h3 class="text-xl font-bold text-stone-900 mb-2">Pick Up & Enjoy</h3>
+              <p class="text-sm text-stone-600 leading-relaxed">Walk in during the designated pickup window, show your QR code to the cashier, collect your fresh delicious food, and celebrate your green impact!</p>
+            </div>
+          </div>
+
+          <!-- Business Flow Steps (Hidden by default) -->
+          <div id="hiw-content-businesses" class="hidden grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-cream-50 p-8 rounded-3xl border border-stone-200/70 hover:shadow-lg transition">
+              <div class="w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center text-xl font-black mb-6 shadow-md shadow-amber-600/20">
+                1
+              </div>
+              <h3 class="text-xl font-bold text-stone-900 mb-2">List Surplus in 30 Seconds</h3>
+              <p class="text-sm text-stone-600 leading-relaxed">Specify unsold fresh items, set a discounted rescue price (or ₹0 for NGO donation), and define your convenient evening pickup window.</p>
+            </div>
+
+            <div class="bg-cream-50 p-8 rounded-3xl border border-stone-200/70 hover:shadow-lg transition">
+              <div class="w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center text-xl font-black mb-6 shadow-md shadow-amber-600/20">
+                2
+              </div>
+              <h3 class="text-xl font-bold text-stone-900 mb-2">Automatic Notifications</h3>
+              <p class="text-sm text-stone-600 leading-relaxed">Nearby consumers and verified hunger-relief NGO volunteers get pinged immediately to reserve your surplus stock.</p>
+            </div>
+
+            <div class="bg-cream-50 p-8 rounded-3xl border border-stone-200/70 hover:shadow-lg transition">
+              <div class="w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center text-xl font-black mb-6 shadow-md shadow-amber-600/20">
+                3
+              </div>
+              <h3 class="text-xl font-bold text-stone-900 mb-2">Scan & Recover Costs</h3>
+              <p class="text-sm text-stone-600 leading-relaxed">Scan the customer's QR pass on our partner portal, eliminate food dumping fees, boost margin, and receive ESG tax credits.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- INTERACTIVE IMPACT CALCULATOR -->
+      <div id="section-impact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-stone-900 rounded-3xl p-8 sm:p-12 text-white shadow-2xl overflow-hidden relative">
+          
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            <div class="lg:col-span-6 space-y-6">
+              <span class="text-xs font-bold uppercase tracking-wider text-brand-300 bg-white/10 px-3 py-1 rounded-full">Interactive Calculator</span>
+              <h2 class="text-3xl sm:text-4xl font-extrabold">Calculate Your Personal Green Impact</h2>
+              <p class="text-brand-100 text-sm leading-relaxed">When you rescue food, you don't just save money — you prevent methane generation in landfills and conserve freshwater resources.</p>
+              
+              <div class="space-y-4 pt-2">
+                <div class="flex items-center justify-between text-sm font-bold">
+                  <span>How many surplus meals will you rescue per week?</span>
+                  <span id="calc-slider-val" class="text-accent-amber text-lg">3 Meals / week</span>
+                </div>
+                <input type="range" id="impact-slider" min="1" max="14" value="3" oninput="calculateImpact(this.value)" class="w-full h-2 bg-brand-700 rounded-lg appearance-none cursor-pointer accent-amber-400" />
+                <div class="flex justify-between text-xs text-brand-300">
+                  <span>1 Meal</span>
+                  <span>7 Meals</span>
+                  <span>14 Meals</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 grid grid-cols-2 gap-4">
+              <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                <div class="text-accent-amber font-extrabold text-3xl" id="calc-money-saved">₹18,720</div>
+                <div class="text-xs font-medium text-stone-300 mt-1">Yearly Money Saved</div>
+              </div>
+
+              <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                <div class="text-emerald-300 font-extrabold text-3xl" id="calc-co2-saved">280 kg</div>
+                <div class="text-xs font-medium text-stone-300 mt-1">CO₂ Emissions Prevented</div>
+              </div>
+
+              <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                <div class="text-sky-300 font-extrabold text-3xl" id="calc-water-saved">65,500 L</div>
+                <div class="text-xs font-medium text-stone-300 mt-1">Freshwater Conserved</div>
+              </div>
+
+              <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                <div class="text-purple-300 font-extrabold text-3xl" id="calc-trees-equiv">14 Trees</div>
+                <div class="text-xs font-medium text-stone-300 mt-1">Planting Equivalent</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TRUSTED PARTNER WALL & TESTIMONIALS -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-stone-400">Trusted by over 450+ Food Businesses & Verified NGOs across India</h3>
+          <div class="flex flex-wrap items-center justify-center gap-8 mt-6 opacity-70 grayscale hover:grayscale-0 transition-all">
+            <span class="font-extrabold text-lg text-stone-700 tracking-tight">HALDIRAM'S</span>
+            <span class="font-black text-lg text-stone-700 tracking-tight">BLUE TOKAI COFFEE</span>
+            <span class="font-extrabold text-lg text-stone-700 tracking-tight">CHAI POINT</span>
+            <span class="font-serif font-bold text-lg text-stone-700 tracking-tight">THE LEELA HOTELS</span>
+            <span class="font-bold text-lg text-stone-700 tracking-tight">FEEDING INDIA</span>
+            <span class="font-extrabold text-lg text-stone-700 tracking-tight">ROBIN HOOD ARMY</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            </div>
+            <p class="text-xs text-stone-600 italic">"I got a surprise box of gourmet sourdough and almond croissants from French Crust for ₹120 instead of ₹450. Everything was crisp and fresh. A win-win for my wallet and the planet!"</p>
+            <div class="flex items-center gap-3 pt-2 border-t border-stone-100">
+              <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-800 font-bold text-xs flex items-center justify-center">AK</div>
+              <div>
+                <div class="text-xs font-bold text-stone-900">Ananya Kulkarni</div>
+                <div class="text-[10px] text-stone-500">Citizen Hero • Bengaluru</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            </div>
+            <p class="text-xs text-stone-600 italic">"As a bakery owner, throwing away leftover artisanal bread at the end of the night broke my heart. FoodRescue helps us recover raw material costs and connect with conscious foodies."</p>
+            <div class="flex items-center gap-3 pt-2 border-t border-stone-100">
+              <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-800 font-bold text-xs flex items-center justify-center">RM</div>
+              <div>
+                <div class="text-xs font-bold text-stone-900">Rohit Mehta</div>
+                <div class="text-[10px] text-stone-500">Founder, The Crust House • Mumbai</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-1 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+              <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            </div>
+            <p class="text-xs text-stone-600 italic">"The ₹0 Bulk NGO portal connects our volunteer drivers directly to banquet halls with surplus party food. We fed over 600 children at shelter homes last weekend alone."</p>
+            <div class="flex items-center gap-3 pt-2 border-t border-stone-100">
+              <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">SS</div>
+              <div>
+                <div class="text-xs font-bold text-stone-900">Simran Sharma</div>
+                <div class="text-[10px] text-stone-500">City Lead, Hope Relief NGO • Delhi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA BANNER -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-brand-600 rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-brand-600/30">
+          <div class="space-y-2 text-center md:text-left">
+            <h3 class="text-2xl sm:text-3xl font-extrabold">Ready to start rescuing food today?</h3>
+            <p class="text-brand-100 text-sm max-w-xl">Join thousands of conscious citizens, chefs, and community heroes building a zero-waste India.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <button onclick="navigateTo('browse')" class="bg-white hover:bg-stone-100 text-brand-800 font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-lg transition text-center">
+              Browse Surplus Food
+            </button>
+            <button onclick="switchRole('business'); navigateTo('restaurant-dashboard')" class="bg-brand-800 hover:bg-brand-900 text-white font-bold text-sm px-6 py-3.5 rounded-xl border border-brand-500 transition text-center">
+              Register as Business
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PAGE 2: BROWSE FOOD (MARKETPLACE) -->
+    <section id="page-browse" class="page-view hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      
+      <!-- Top Filters & Search Bar -->
+      <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <!-- Search Input -->
+        <div class="relative w-full md:w-96">
+          <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-3.5"></i>
+          <input type="text" id="marketplace-search" oninput="applyFilters()" placeholder="Search food, restaurants, dishes..." class="w-full bg-stone-50 border border-stone-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-stone-800 focus:bg-white focus:outline-none focus:border-brand-500 transition" />
+        </div>
+
+        <!-- Category Pills Bar -->
+        <div class="flex items-center gap-2 overflow-x-auto w-full pb-2 md:pb-0 custom-scrollbar text-xs font-semibold">
+          <button onclick="setCategoryFilter('All')" class="cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-brand-600 text-white transition shadow-sm" data-category="All">All Items</button>
+          <button onclick="setCategoryFilter('Bakery')" class="cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="Bakery">🥐 Bakery</button>
+          <button onclick="setCategoryFilter('Meals')" class="cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="Meals">🍛 Meals & Thalis</button>
+          <button onclick="setCategoryFilter('Groceries')" class="cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="Groceries">🥬 Groceries</button>
+          <button onclick="setCategoryFilter('Desserts')" class="cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="Desserts">🍰 Desserts</button>
+          <button onclick="setCategoryFilter('Dairy')" class="cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-category="Dairy">🥛 Dairy</button>
+          <button onclick="setCategoryFilter('NGO Bulk')" class="cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-amber-100 text-amber-900 hover:bg-amber-200 transition" data-category="NGO Bulk">🤝 ₹0 NGO Bulk</button>
+        </div>
+
+        <!-- View Toggle (Grid vs Interactive Map) -->
+        <div class="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200 text-xs font-bold shrink-0">
+          <button onclick="setViewMode('grid')" id="view-mode-grid" class="px-3 py-1.5 rounded-lg bg-white text-brand-700 shadow-sm flex items-center gap-1.5 transition">
+            <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+            <span>Cards</span>
+          </button>
+          <button onclick="setViewMode('map')" id="view-mode-map" class="px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 flex items-center gap-1.5 transition">
+            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+            <span>Live Map</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Main Marketplace Grid & Sidebar -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Filter Sidebar -->
+        <div class="lg:col-span-3 bg-white p-5 rounded-2xl border border-stone-200 space-y-6 shadow-sm">
+          
+          <div class="flex items-center justify-between pb-3 border-b border-stone-100">
+            <div class="flex items-center gap-2 font-extrabold text-sm text-stone-900">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4 text-brand-600"></i>
+              <span>Filters</span>
+            </div>
+            <button onclick="resetFilters()" class="text-xs font-bold text-stone-400 hover:text-brand-600 transition">Reset All</button>
+          </div>
+
+          <!-- Dietary Filter -->
+          <div class="space-y-2.5">
+            <label class="text-xs font-bold text-stone-700 uppercase tracking-wider">Dietary Preferences</label>
+            <div class="space-y-1.5 text-xs font-medium text-stone-600">
+              <label class="flex items-center gap-2 cursor-pointer hover:text-stone-900">
+                <input type="checkbox" value="Veg" onchange="applyFilters()" class="dietary-cb rounded border-stone-300 text-brand-600 focus:ring-brand-500" checked />
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>100% Pure Veg</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-stone-900">
+                <input type="checkbox" value="Non-Veg" onchange="applyFilters()" class="dietary-cb rounded border-stone-300 text-brand-600 focus:ring-brand-500" checked />
+                <span class="inline-block w-2 h-2 rounded-full bg-red-500"></span>
+                <span>Non-Veg</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-stone-900">
+                <input type="checkbox" value="Vegan" onchange="applyFilters()" class="dietary-cb rounded border-stone-300 text-brand-600 focus:ring-brand-500" checked />
+                <span class="inline-block w-2 h-2 rounded-full bg-teal-500"></span>
+                <span>Vegan</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer hover:text-stone-900">
+                <input type="checkbox" value="Jain" onchange="applyFilters()" class="dietary-cb rounded border-stone-300 text-brand-600 focus:ring-brand-500" checked />
+                <span class="inline-block w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Jain Friendly</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Price Max Slider -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-bold text-stone-700">
+              <span class="uppercase tracking-wider">Max Price</span>
+              <span id="price-filter-display" class="text-brand-700 font-extrabold">₹300</span>
+            </div>
+            <input type="range" id="price-slider" min="0" max="500" step="20" value="300" oninput="document.getElementById('price-filter-display').innerText = '₹' + this.value; applyFilters()" class="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-brand-600" />
+            <div class="flex justify-between text-[10px] text-stone-400 font-semibold">
+              <span>₹0 (Free NGO)</span>
+              <span>₹500</span>
+            </div>
+          </div>
+
+          <!-- Max Distance Slider -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-bold text-stone-700">
+              <span class="uppercase tracking-wider">Distance Radius</span>
+              <span id="dist-filter-display" class="text-brand-700 font-extrabold">10 km</span>
+            </div>
+            <input type="range" id="dist-slider" min="1" max="25" step="1" value="10" oninput="document.getElementById('dist-filter-display').innerText = this.value + ' km'; applyFilters()" class="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-brand-600" />
+            <div class="flex justify-between text-[10px] text-stone-400 font-semibold">
+              <span>1 km</span>
+              <span>25 km</span>
+            </div>
+          </div>
+
+          <!-- Sort Order -->
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-stone-700 uppercase tracking-wider">Sort By</label>
+            <select id="sort-select" onchange="applyFilters()" class="w-full bg-stone-50 border border-stone-200 text-stone-800 text-xs font-semibold rounded-xl p-2.5 focus:outline-none focus:border-brand-500">
+              <option value="expiring">⏰ Expiring Soonest</option>
+              <option value="price_low">💰 Price: Low to High</option>
+              <option value="discount">🔥 Highest Discount %</option>
+              <option value="distance">📍 Distance: Nearest</option>
+              <option value="rating">⭐ Highest Rated</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Right Listings Area / Map Area -->
+        <div class="lg:col-span-9">
+          
+          <!-- Results Count & Active City Badge -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-xs font-bold text-stone-500">
+              Showing <span id="results-count" class="text-stone-900 font-extrabold">0</span> available surplus items in <span id="current-city-label" class="text-brand-700 font-black">Bengaluru</span>
+            </div>
+          </div>
+
+          <!-- Grid View Container -->
+          <div id="marketplace-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Food Cards Rendered by JS -->
+          </div>
+
+          <!-- Interactive Vector Map View Container (Hidden by default) -->
+          <div id="marketplace-map-container" class="hidden bg-white p-4 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+            <div class="relative w-full h-[520px] bg-emerald-950 rounded-2xl overflow-hidden border border-stone-300">
+              
+              <!-- Stylized Vector Map Canvas / SVG Elements -->
+              <svg class="w-full h-full opacity-30" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#10b981" stroke-width="0.5"/>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+                <!-- Stylized Road Networks -->
+                <path d="M-50,260 Q 300,180 600,300 T 1200,200" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+                <path d="M200,-50 Q 350,250 400,600" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round"/>
+                <path d="M700,-50 Q 600,300 800,600" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round"/>
+                <!-- Stylized Lake / Parks -->
+                <circle cx="280" cy="380" r="70" fill="#065f46" />
+                <circle cx="750" cy="180" r="50" fill="#065f46" />
+              </svg>
+
+              <!-- Map Overlay Title -->
+              <div class="absolute top-4 left-4 bg-stone-900/80 backdrop-blur-md px-3.5 py-2 rounded-xl text-white text-xs font-bold flex items-center gap-2 border border-stone-700">
+                <span class="w-2 h-2 rounded-full bg-brand-400 animate-ping"></span>
+                <span>Live Hotspots in <span id="map-city-header">Bengaluru</span></span>
+              </div>
+
+              <!-- Interactive Pins Container -->
+              <div id="map-pins-container" class="absolute inset-0">
+                <!-- Dynamically positioned Pins rendered by JS -->
+              </div>
+
+              <!-- Map Selected Item Popover -->
+              <div id="map-selected-popover" class="hidden absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 bg-white p-4 rounded-2xl shadow-2xl border border-stone-200 z-30 space-y-2">
+                <!-- Dynamic Popover Details -->
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="hidden text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-4">
+            <div class="w-16 h-16 bg-stone-100 text-stone-400 rounded-full flex items-center justify-center mx-auto">
+              <i data-lucide="package-search" class="w-8 h-8"></i>
+            </div>
+            <h4 class="text-base font-bold text-stone-800">No surplus food matching your filter</h4>
+            <p class="text-xs text-stone-500 max-w-sm mx-auto">Try loosening your dietary, distance, or price filters to discover more rescue bags.</p>
+            <button onclick="resetFilters()" class="bg-brand-600 text-white font-bold text-xs px-4 py-2 rounded-xl">Clear All Filters</button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- PAGE 3: CUSTOMER DASHBOARD -->
+    <section id="page-customer-dashboard" class="page-view hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- Dashboard Top Hero Banner -->
+      <div class="bg-gradient-to-r from-brand-900 to-emerald-800 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-2xl font-black text-white">
+            🌱
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-2xl font-extrabold" id="cust-profile-name">Ananya's Rescue Hub</h2>
+              <span class="bg-accent-amber text-stone-900 font-extrabold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">Level 3 • Green Warrior</span>
+            </div>
+            <p class="text-xs text-brand-200 mt-1">Thank you for making Bangalore greener one delicious meal at a time!</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/15 text-center">
+            <div class="text-xl font-extrabold text-accent-amber" id="cust-eco-points">850 pts</div>
+            <div class="text-[10px] text-brand-200 uppercase font-bold">Eco Rewards</div>
+          </div>
+          <button onclick="navigateTo('browse')" class="bg-white hover:bg-stone-100 text-brand-900 font-extrabold text-xs px-4 py-3 rounded-xl shadow transition">
+            + Rescue Another Meal
+          </button>
+        </div>
+      </div>
+
+      <!-- Customer KPI Impact Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="flex items-center justify-between text-stone-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider">Meals Rescued</span>
+            <i data-lucide="utensils" class="w-4 h-4 text-brand-600"></i>
+          </div>
+          <div class="text-2xl font-extrabold text-stone-900" id="cust-stat-meals">12 Meals</div>
+          <div class="text-[11px] text-emerald-600 font-bold mt-1">↑ 3 this week</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="flex items-center justify-between text-stone-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider">Money Saved</span>
+            <i data-lucide="indian-rupee" class="w-4 h-4 text-brand-600"></i>
+          </div>
+          <div class="text-2xl font-extrabold text-brand-700" id="cust-stat-savings">₹2,840</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Avg 71% off MRP</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="flex items-center justify-between text-stone-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider">CO₂ Prevented</span>
+            <i data-lucide="sprout" class="w-4 h-4 text-brand-600"></i>
+          </div>
+          <div class="text-2xl font-extrabold text-stone-900" id="cust-stat-co2">21.6 kg</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">≈ 1.2 Trees Planted</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="flex items-center justify-between text-stone-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider">Water Saved</span>
+            <i data-lucide="droplet" class="w-4 h-4 text-brand-600"></i>
+          </div>
+          <div class="text-2xl font-extrabold text-stone-900" id="cust-stat-water">5,040 L</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">100 showers equiv.</div>
+        </div>
+      </div>
+
+      <!-- Active Reservations (Live QR Pass Section) -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-extrabold text-stone-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Active Pickup Passes</span>
+          </h3>
+          <span class="text-xs font-bold text-stone-500" id="active-res-count-label">0 Active</span>
+        </div>
+
+        <div id="cust-active-reservations-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Past Rescue History -->
+      <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+        <h3 class="text-base font-extrabold text-stone-900">Past Rescue History</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-stone-400 uppercase tracking-wider border-b border-stone-100 font-bold">
+              <tr>
+                <th class="pb-3">Order ID</th>
+                <th class="pb-3">Item & Restaurant</th>
+                <th class="pb-3">Qty</th>
+                <th class="pb-3">Rescue Price</th>
+                <th class="pb-3">Status</th>
+                <th class="pb-3 text-right">Receipt</th>
+              </tr>
+            </thead>
+            <tbody id="cust-past-history-tbody" class="divide-y divide-stone-100 font-medium text-stone-700">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Gamification Badges Section -->
+      <div class="bg-cream-100 p-6 rounded-3xl border border-stone-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-extrabold text-stone-900">Your Eco Badges & Achievements</h3>
+            <p class="text-xs text-stone-500">Earn badges and redeem discount vouchers at your favourite restaurants</p>
+          </div>
+          <span class="text-xs font-black text-brand-700">4 / 6 Unlocked</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <div class="bg-white p-3.5 rounded-2xl text-center border border-brand-200 shadow-sm space-y-1">
+            <div class="text-2xl">🌱</div>
+            <div class="text-xs font-bold text-stone-900">First Rescue</div>
+            <div class="text-[10px] text-emerald-600 font-bold">Unlocked ✓</div>
+          </div>
+          <div class="bg-white p-3.5 rounded-2xl text-center border border-brand-200 shadow-sm space-y-1">
+            <div class="text-2xl">🥐</div>
+            <div class="text-xs font-bold text-stone-900">Bakery Saver</div>
+            <div class="text-[10px] text-emerald-600 font-bold">Unlocked ✓</div>
+          </div>
+          <div class="bg-white p-3.5 rounded-2xl text-center border border-brand-200 shadow-sm space-y-1">
+            <div class="text-2xl">🍛</div>
+            <div class="text-xs font-bold text-stone-900">Thali Champion</div>
+            <div class="text-[10px] text-emerald-600 font-bold">Unlocked ✓</div>
+          </div>
+          <div class="bg-white p-3.5 rounded-2xl text-center border border-brand-200 shadow-sm space-y-1">
+            <div class="text-2xl">🌍</div>
+            <div class="text-xs font-bold text-stone-900">Carbon Crusher</div>
+            <div class="text-[10px] text-emerald-600 font-bold">Unlocked ✓</div>
+          </div>
+          <div class="bg-white/60 opacity-60 p-3.5 rounded-2xl text-center border border-stone-200 space-y-1">
+            <div class="text-2xl">⚡</div>
+            <div class="text-xs font-bold text-stone-900">50 Rescues</div>
+            <div class="text-[10px] text-stone-400 font-bold">12/50 Done</div>
+          </div>
+          <div class="bg-white/60 opacity-60 p-3.5 rounded-2xl text-center border border-stone-200 space-y-1">
+            <div class="text-2xl">👑</div>
+            <div class="text-xs font-bold text-stone-900">Zero Waste Hero</div>
+            <div class="text-[10px] text-stone-400 font-bold">Locked</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PAGE 4: RESTAURANT / BUSINESS DASHBOARD -->
+    <section id="page-restaurant-dashboard" class="page-view hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- Top Business Header -->
+      <div class="bg-stone-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-amber-500 text-stone-950 flex items-center justify-center text-2xl font-black">
+            👨‍🍳
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-2xl font-extrabold">The French Crust Bakery & Cafe</h2>
+              <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">FSSAI Verified</span>
+            </div>
+            <p class="text-xs text-stone-400 mt-1">Indiranagar 100ft Road, Bengaluru • Partner ID: #FR-BIZ-104</p>
+          </div>
+        </div>
+
+        <!-- Post Surplus Food Trigger -->
+        <div class="flex items-center gap-3">
+          <button onclick="openPostFoodModal()" class="bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs px-5 py-3 rounded-xl shadow-lg transition flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>+ Post Surplus Food</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Business Analytics Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Surplus Revenue Recovered</div>
+          <div class="text-2xl font-extrabold text-brand-700">₹42,850</div>
+          <div class="text-[11px] text-emerald-600 font-bold mt-1">↑ Monetized from waste</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Total Portions Rescued</div>
+          <div class="text-2xl font-extrabold text-stone-900">348 Meals</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">94% sell-through rate</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Landfill Waste Diverted</div>
+          <div class="text-2xl font-extrabold text-stone-900">415 kg</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Zero dumping fees</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Customer Rating</div>
+          <div class="text-2xl font-extrabold text-amber-500 flex items-center gap-1">
+            <span>4.9</span>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+          </div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">From 182 verified pickups</div>
+        </div>
+      </div>
+
+      <!-- QR Code Pickup Verifier Tool & Active Orders -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left: Quick QR / OTP Scanner Simulation -->
+        <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+          <div class="flex items-center gap-2">
+            <i data-lucide="scan-line" class="w-5 h-5 text-brand-600"></i>
+            <h3 class="text-base font-extrabold text-stone-900">Verify Customer Pickup</h3>
+          </div>
+          <p class="text-xs text-stone-500">Scan customer QR pass or enter their 6-digit Reservation ID to mark food as collected.</p>
+
+          <div class="space-y-3 pt-2">
+            <div class="relative">
+              <input type="text" id="partner-otp-input" placeholder="e.g. FR-BLR-89241" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs font-mono font-bold text-stone-900 uppercase focus:bg-white focus:outline-none focus:border-brand-500" />
+            </div>
+            <button onclick="verifyPartnerPickup()" class="w-full bg-stone-900 hover:bg-black text-white font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2">
+              <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+              <span>Verify & Complete Pickup</span>
+            </button>
+            <div id="partner-verify-status" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+          </div>
+        </div>
+
+        <!-- Right: Incoming Customer Reservations -->
+        <div class="lg:col-span-8 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-extrabold text-stone-900">Today's Pickup Orders</h3>
+            <span class="text-xs font-bold text-stone-400" id="partner-orders-count">0 orders</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="text-stone-400 uppercase tracking-wider border-b border-stone-100 font-bold">
+                <tr>
+                  <th class="pb-3">Reservation ID</th>
+                  <th class="pb-3">Item</th>
+                  <th class="pb-3">Qty</th>
+                  <th class="pb-3">Total (₹)</th>
+                  <th class="pb-3">Status</th>
+                  <th class="pb-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="partner-orders-tbody" class="divide-y divide-stone-100 font-medium text-stone-700">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Active Surplus Listings Manager -->
+      <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-extrabold text-stone-900">Your Active Surplus Listings</h3>
+            <p class="text-xs text-stone-500">Manage portions, prices, and closing times in real-time</p>
+          </div>
+          <button onclick="openPostFoodModal()" class="text-brand-700 hover:text-brand-800 text-xs font-bold flex items-center gap-1">
+            <span>+ Add Listing</span>
+          </button>
+        </div>
+
+        <div id="partner-listings-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PAGE 5: NGO / COMMUNITY PANTRY DASHBOARD -->
+    <section id="page-ngo-dashboard" class="page-view hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- NGO Top Banner -->
+      <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-2xl font-black text-white">
+            🤝
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-2xl font-extrabold">Hope & Feeding India Volunteer Network</h2>
+              <span class="bg-blue-400 text-stone-950 font-extrabold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">Verified 80G Charity</span>
+            </div>
+            <p class="text-xs text-blue-200 mt-1">Connecting surplus banquet & hotel food with local orphanages and shelter communities.</p>
+          </div>
+        </div>
+
+        <button onclick="openBulkRequestModal()" class="bg-white hover:bg-stone-100 text-blue-900 font-extrabold text-xs px-5 py-3 rounded-xl shadow transition">
+          + Request Bulk Food Drive
+        </button>
+      </div>
+
+      <!-- NGO Impact Statistics -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Bulk Meals Distributed</div>
+          <div class="text-2xl font-extrabold text-blue-700">8,420 Meals</div>
+          <div class="text-[11px] text-emerald-600 font-bold mt-1">100% Free Food</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Partner Hotels & Caterers</div>
+          <div class="text-2xl font-extrabold text-stone-900">38 Donors</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Regular surplus providers</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Active Volunteer Drivers</div>
+          <div class="text-2xl font-extrabold text-stone-900">42 Logistics</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Equipped with thermal boxes</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Beneficiary Shelters</div>
+          <div class="text-2xl font-extrabold text-stone-900">14 Centers</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Bengaluru Urban & Rural</div>
+        </div>
+      </div>
+
+      <!-- Available ₹0 Bulk Surplus Listings -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-extrabold text-stone-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-ping"></span>
+            <span>Available ₹0 Free Bulk Donations (For NGOs)</span>
+          </h3>
+          <span class="text-xs font-bold text-stone-500">Live Banquet & Catering Surplus</span>
+        </div>
+
+        <div id="ngo-bulk-listings" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PAGE 6: ADMIN DASHBOARD -->
+    <section id="page-admin-dashboard" class="page-view hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      
+      <!-- Admin Top Banner -->
+      <div class="bg-stone-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-2xl font-extrabold">Platform Admin Command Center</h2>
+            <span class="bg-red-500 text-white font-extrabold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">Super Admin</span>
+          </div>
+          <p class="text-xs text-stone-400 mt-1">Platform overview, KYC business approvals, listing moderation, and live metrics.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="simulateNewListingAlert()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition">
+            + Simulate Incoming Listing
+          </button>
+        </div>
+      </div>
+
+      <!-- Global Platform KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Total Platform GMV</div>
+          <div class="text-2xl font-extrabold text-stone-900">₹31,42,800</div>
+          <div class="text-[11px] text-emerald-600 font-bold mt-1">↑ 18% this month</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Active Verified Partners</div>
+          <div class="text-2xl font-extrabold text-brand-700">462 Businesses</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Restaurants, Bakeries, Supermarkets</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Registered Citizens</div>
+          <div class="text-2xl font-extrabold text-stone-900">28,490 Users</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Across 5 Metro Cities</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">Landfill CO₂ Offsets</div>
+          <div class="text-2xl font-extrabold text-emerald-600">37.2 Metric Tons</div>
+          <div class="text-[11px] text-stone-400 font-semibold mt-1">Verified Green Impact</div>
+        </div>
+      </div>
+
+      <!-- Admin Management Tables (KYC Approvals & Content Moderation) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left: Partner KYC Verification Queue -->
+        <div class="lg:col-span-6 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+          <h3 class="text-base font-extrabold text-stone-900">Pending Business KYC Queue</h3>
+          <div class="space-y-3" id="admin-kyc-queue">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Real-time System Event Stream -->
+        <div class="lg:col-span-6 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+          <h3 class="text-base font-extrabold text-stone-900">Live Platform Activity Log</h3>
+          <div class="space-y-2.5 max-h-72 overflow-y-auto custom-scrollbar" id="admin-activity-log">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-stone-900 text-white border-t border-stone-800 pt-16 pb-12 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-stone-800">
+        
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-brand-500 flex items-center justify-center text-white">
+              <i data-lucide="leaf" class="w-5 h-5"></i>
+            </div>
+            <span class="text-2xl font-extrabold tracking-tight">Food<span class="text-brand-400">Rescue</span></span>
+          </div>
+          <p class="text-xs text-stone-400 max-w-sm leading-relaxed">
+            India's hyper-local food rescue network preventing edible food from hitting landfills while offering incredible savings to citizens and hunger-relief support to NGOs.
+          </p>
+          <div class="flex items-center gap-3 text-stone-400 pt-2">
+            <span class="text-xs font-semibold">Cities Active:</span>
+            <span class="text-xs text-brand-300 font-bold">Bengaluru • Mumbai • Delhi-NCR • Hyderabad • Pune</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-stone-300">Discover</h4>
+          <ul class="space-y-2 text-xs text-stone-400 font-medium">
+            <li><a href="#" onclick="navigateTo('browse'); return false;" class="hover:text-white transition">Browse Surplus Food</a></li>
+            <li><a href="#" onclick="quickFilterCategory('Bakery'); return false;" class="hover:text-white transition">Artisanal Bakery Bags</a></li>
+            <li><a href="#" onclick="quickFilterCategory('Meals'); return false;" class="hover:text-white transition">Meal & Thali Packs</a></li>
+            <li><a href="#" onclick="quickFilterCategory('NGO Bulk'); return false;" class="hover:text-white transition">₹0 NGO Bulk Rescue</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-stone-300">Partners & NGOs</h4>
+          <ul class="space-y-2 text-xs text-stone-400 font-medium">
+            <li><a href="#" onclick="switchRole('business'); navigateTo('restaurant-dashboard'); return false;" class="hover:text-white transition">For Restaurants & Hotels</a></li>
+            <li><a href="#" onclick="switchRole('ngo'); navigateTo('ngo-dashboard'); return false;" class="hover:text-white transition">For Hunger-Relief NGOs</a></li>
+            <li><a href="#" class="hover:text-white transition">FSSAI Hygiene Standards</a></li>
+            <li><a href="#" class="hover:text-white transition">Zero-Waste ESG Reports</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-stone-300">Quick Persona Switch</h4>
+          <div class="space-y-1.5">
+            <button onclick="switchRole('customer')" class="w-full text-left text-xs bg-stone-800 hover:bg-stone-700 p-2 rounded-lg text-stone-300 transition">👤 Citizen Consumer</button>
+            <button onclick="switchRole('business')" class="w-full text-left text-xs bg-stone-800 hover:bg-stone-700 p-2 rounded-lg text-stone-300 transition">👨‍🍳 Restaurant Partner</button>
+            <button onclick="switchRole('ngo')" class="w-full text-left text-xs bg-stone-800 hover:bg-stone-700 p-2 rounded-lg text-stone-300 transition">🤝 NGO Representative</button>
+            <button onclick="switchRole('admin')" class="w-full text-left text-xs bg-stone-800 hover:bg-stone-700 p-2 rounded-lg text-stone-300 transition">🛡️ Platform Admin</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
+        <div>© 2026 FoodRescue India Inc. All rights reserved. • Rescue Food. Reduce Waste. Feed Communities.</div>
+        <div class="flex items-center gap-6">
+          <a href="#" class="hover:text-stone-400">Privacy Policy</a>
+          <a href="#" class="hover:text-stone-400">Terms of Service</a>
+          <a href="#" class="hover:text-stone-400">Food Safety Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- MODAL 1: FOOD DETAILS & DIRECT RESERVE MODAL -->
+  <div id="food-details-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-stone-200 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Close Trigger -->
+      <button onclick="closeModal('food-details-modal')" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-500 hover:bg-stone-200 flex items-center justify-center z-10">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div id="modal-food-content">
+        <!-- Dynamic Content Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: CONFIRMATION & QR CODE PICKUP PASS -->
+  <div id="booking-confirmation-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-stone-900/70 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="relative bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+      
+      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-black shadow-inner">
+        ✓
+      </div>
+
+      <div class="space-y-1">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">Booking Confirmed</span>
+        <h3 class="text-2xl font-extrabold text-stone-900 pt-1">Surplus Food Rescued!</h3>
+        <p class="text-xs text-stone-500" id="conf-subtext">Show this QR pass at the store counter during pickup.</p>
+      </div>
+
+      <!-- Scannable QR Canvas Container -->
+      <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200 inline-block mx-auto shadow-sm">
+        <canvas id="qr-canvas" width="180" height="180" class="mx-auto rounded-lg"></canvas>
+        <div class="text-xs font-mono font-bold text-stone-800 mt-2" id="conf-order-id">FR-BLR-89241</div>
+        <div class="text-[10px] text-stone-400 font-semibold">Digital Verification Hash Valid</div>
+      </div>
+
+      <!-- Order Summary Snippet -->
+      <div class="bg-cream-50 p-3.5 rounded-xl border border-stone-200 text-left text-xs space-y-1.5 font-medium">
+        <div class="flex justify-between">
+          <span class="text-stone-500">Item:</span>
+          <span class="font-bold text-stone-900" id="conf-item-title">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-stone-500">Restaurant:</span>
+          <span class="font-bold text-stone-900" id="conf-restaurant-title">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-stone-500">Pickup Window:</span>
+          <span class="font-bold text-brand-700" id="conf-pickup-window">-</span>
+        </div>
+        <div class="flex justify-between pt-1 border-t border-stone-200 font-bold">
+          <span class="text-stone-900">Total Paid at Pickup:</span>
+          <span class="text-brand-700 text-sm font-extrabold" id="conf-total-price">₹0</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-2">
+        <button onclick="closeModal('booking-confirmation-modal'); navigateTo('customer-dashboard');" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-md transition flex items-center justify-center gap-1.5">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>View in Customer Dashboard</span>
+        </button>
+        <button onclick="closeModal('booking-confirmation-modal')" class="w-full text-stone-500 hover:text-stone-800 text-xs font-bold py-2">
+          Done & Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 3: POST SURPLUS FOOD (FOR RESTAURANT PARTNERS) -->
+  <div id="post-food-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+      
+      <button onclick="closeModal('post-food-modal')" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-500 hover:bg-stone-200 flex items-center justify-center">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black">
+          +
+        </div>
+        <div>
+          <h3 class="text-lg font-extrabold text-stone-900">Post Surplus Food Listing</h3>
+          <p class="text-xs text-stone-500">List unsold fresh items to recover costs and prevent waste.</p>
+        </div>
+      </div>
+
+      <form onsubmit="handlePostSurplusSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Item Title / Surprise Bag Name</label>
+          <input type="text" id="post-title" required placeholder="e.g. Sourdough Loaf & Croissant Assortment" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:border-brand-500 font-semibold text-stone-800" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Category</label>
+            <select id="post-category" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none">
+              <option value="Bakery">Bakery & Breads</option>
+              <option value="Meals">Meals & Thalis</option>
+              <option value="Groceries">Groceries & Produce</option>
+              <option value="Desserts">Sweets & Desserts</option>
+              <option value="Dairy">Dairy & Milk</option>
+              <option value="NGO Bulk">Free NGO Bulk</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Dietary Tag</label>
+            <select id="post-dietary" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none">
+              <option value="Veg">100% Pure Veg</option>
+              <option value="Non-Veg">Non-Veg</option>
+              <option value="Vegan">Vegan</option>
+              <option value="Jain">Jain Friendly</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Original MRP (₹)</label>
+            <input type="number" id="post-orig-price" required placeholder="400" min="0" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Rescue Price (₹)</label>
+            <input type="number" id="post-rescue-price" required placeholder="120" min="0" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Portions (Qty)</label>
+            <input type="number" id="post-qty" required placeholder="5" min="1" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Pickup Window Start</label>
+            <input type="text" id="post-pickup-start" placeholder="8:00 PM" value="8:30 PM" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block font-bold text-stone-700 mb-1">Pickup Window Closes</label>
+            <input type="text" id="post-pickup-end" placeholder="10:00 PM" value="10:00 PM" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">Food Image Preset</label>
+          <select id="post-image-preset" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 font-semibold text-stone-800 focus:outline-none">
+            <option value="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80">Artisanal Bakery & Breads</option>
+            <option value="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80">Royal Dum Biryani Box</option>
+            <option value="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80">North Indian Deluxe Thali</option>
+            <option value="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80">Gourmet Pastries & Desserts</option>
+            <option value="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=800&q=80">Fresh Farm Veggies Crate</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-extrabold py-3.5 rounded-xl shadow-md transition">
+          Publish Surplus Listing Now
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform transition-all duration-300 translate-y-24 opacity-0 flex items-center gap-3 bg-stone-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-stone-800 text-xs font-semibold">
+    <div id="toast-icon">✨</div>
+    <div id="toast-message">Notification text</div>
+  </div>
+
+  <!-- ================= JAVASCRIPT APP LOGIC ================= -->
+  <script>
+    // INITIAL MOCK STATE
+    const INITIAL_FOOD_ITEMS = [
+      {
+        id: "item-1",
+        title: "Handi Dum Paneer Biryani Surplus Bag",
+        restaurant: "Royal Biryani House",
+        category: "Meals",
+        dietary: "Veg",
+        city: "Bengaluru",
+        location: "12th Main, Indiranagar, Bengaluru",
+        distance: "1.8 km",
+        rating: 4.9,
+        reviewsCount: 184,
+        origPrice: 320,
+        rescuePrice: 99,
+        qty: 3,
+        pickupStart: "8:30 PM",
+        pickupEnd: "10:00 PM",
+        image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80",
+        description: "Freshly prepared slow-cooked handi biryani packed with aromatic basmati rice, soft cottage cheese cubes, saffron, and fresh spices. Includes burani garlic raita and dessert.",
+        mapCoords: { x: 32, y: 45 },
+        hygieneScore: "5-Star FSSAI Verified"
+      },
+      {
+        id: "item-2",
+        title: "Artisanal Sourdough & Croissant Box",
+        restaurant: "The French Crust Bakery",
+        category: "Bakery",
+        dietary: "Veg",
+        city: "Bengaluru",
+        location: "100ft Road, Indiranagar, Bengaluru",
+        distance: "2.4 km",
+        rating: 4.95,
+        reviewsCount: 240,
+        origPrice: 450,
+        rescuePrice: 120,
+        qty: 5,
+        pickupStart: "8:00 PM",
+        pickupEnd: "9:30 PM",
+        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80",
+        description: "1 full organic country sourdough loaf + 2 butter croissants baked this morning. Sealed and 100% fresh.",
+        mapCoords: { x: 48, y: 38 },
+        hygieneScore: "5-Star FSSAI Verified"
+      },
+      {
+        id: "item-3",
+        title: "Deluxe North Indian Thali Set",
+        restaurant: "Punjab Grill Express",
+        category: "Meals",
+        dietary: "Non-Veg",
+        city: "Bengaluru",
+        location: "Koramangala 5th Block, Bengaluru",
+        distance: "3.6 km",
+        rating: 4.8,
+        reviewsCount: 92,
+        origPrice: 450,
+        rescuePrice: 140,
+        qty: 4,
+        pickupStart: "9:00 PM",
+        pickupEnd: "10:30 PM",
+        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80",
+        description: "Butter chicken or paneer makhani, dal makhani, 3 tandoori rotis, jeera rice, salad and gulab jamun.",
+        mapCoords: { x: 62, y: 55 },
+        hygieneScore: "5-Star FSSAI Verified"
+      },
+      {
+        id: "item-4",
+        title: "Gourmet Pastry & Cupcake Assortment",
+        restaurant: "Sweet Treats Bakehouse",
+        category: "Desserts",
+        dietary: "Veg",
+        city: "Bengaluru",
+        location: "Lavelle Road, Bengaluru",
+        distance: "4.2 km",
+        rating: 4.9,
+        reviewsCount: 310,
+        origPrice: 390,
+        rescuePrice: 110,
+        qty: 2,
+        pickupStart: "7:30 PM",
+        pickupEnd: "9:00 PM",
+        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+        description: "Box of 4 pastries: Belgian chocolate ganache, red velvet, lemon tart, and blueberry mousse pastry.",
+        mapCoords: { x: 40, y: 70 },
+        hygieneScore: "5-Star FSSAI Verified"
+      },
+      {
+        id: "item-5",
+        title: "Organic Farm Fresh Veggie Crate (5kg)",
+        restaurant: "GreenRoots Supermarket",
+        category: "Groceries",
+        dietary: "Vegan",
+        city: "Bengaluru",
+        location: "HSR Layout Sector 3, Bengaluru",
+        distance: "5.1 km",
+        rating: 4.7,
+        reviewsCount: 154,
+        origPrice: 280,
+        rescuePrice: 80,
+        qty: 6,
+        pickupStart: "7:00 PM",
+        pickupEnd: "9:30 PM",
+        image: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=800&q=80",
+        description: "Assorted box of hydroponic spinach, bell peppers, tomatoes, cucumbers, and carrots harvested today.",
+        mapCoords: { x: 75, y: 65 },
+        hygieneScore: "5-Star FSSAI Verified"
+      },
+      {
+        id: "item-6",
+        title: "100-Portion Wedding Banquet Dal & Rice (Free for NGO)",
+        restaurant: "Grand Palace Banquets",
+        category: "NGO Bulk",
+        dietary: "Veg",
+        city: "Bengaluru",
+        location: "Whitefield Main Road, Bengaluru",
+        distance: "8.5 km",
+        rating: 5.0,
+        reviewsCount: 45,
+        origPrice: 6500,
+        rescuePrice: 0,
+        qty: 1,
+        pickupStart: "9:30 PM",
+        pickupEnd: "11:00 PM",
+        image: "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=800&q=80",
+        description: "High quality, hot buffet surplus in large stainless steel catering containers. Free for verified NGOs with logistics.",
+        mapCoords: { x: 85, y: 30 },
+        hygieneScore: "5-Star FSSAI Verified"
+      }
+    ];
+
+    // APPLICATION STATE
+    let state = {
+      role: 'customer', // 'customer' | 'business' | 'ngo' | 'admin'
+      currentCity: 'Bengaluru',
+      foodItems: JSON.parse(localStorage.getItem('fr_items')) || INITIAL_FOOD_ITEMS,
+      reservations: JSON.parse(localStorage.getItem('fr_reservations')) || [
+        {
+          id: 'FR-BLR-89241',
+          itemId: 'item-2',
+          itemTitle: 'Artisanal Sourdough & Croissant Box',
+          restaurant: 'The French Crust Bakery',
+          qty: 1,
+          totalPrice: 120,
+          pickupWindow: '8:00 PM - 9:30 PM',
+          status: 'Active',
+          reservedAt: new Date().toISOString()
+        }
+      ],
+      filterCategory: 'All',
+      viewMode: 'grid'
+    };
+
+    // SAVE STATE HELPER
+    function saveState() {
+      localStorage.setItem('fr_items', JSON.stringify(state.foodItems));
+      localStorage.setItem('fr_reservations', JSON.stringify(state.reservations));
+    }
+
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderFlashDeals();
+      applyFilters();
+      renderDashboards();
+      updateHeaderBadge();
+    });
+
+    // NAVIGATION
+    function navigateTo(pageId) {
+      document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById(`page-${pageId}`);
+      if (target) {
+        target.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Update Nav active style
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('bg-brand-50', 'text-brand-700');
+        btn.classList.add('text-stone-600');
+      });
+      const activeNav = document.getElementById(`nav-${pageId}`);
+      if (activeNav) {
+        activeNav.classList.add('bg-brand-50', 'text-brand-700');
+        activeNav.classList.remove('text-stone-600');
+      }
+
+      // Refresh map pins or icons
+      setTimeout(() => lucide.createIcons(), 50);
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+      lucide.createIcons();
+    }
+
+    // ROLE SWITCHER
+    function switchRole(role) {
+      state.role = role;
+      
+      // Update UI button highlights
+      ['customer', 'business', 'ngo', 'admin'].forEach(r => {
+        const btn = document.getElementById(`role-btn-${r}`);
+        if (btn) {
+          if (r === role) {
+            btn.className = "px-2.5 py-1 rounded-lg transition bg-white text-brand-700 shadow-sm font-bold";
+          } else {
+            btn.className = "px-2.5 py-1 rounded-lg transition text-stone-600 hover:text-stone-900";
+          }
+        }
+      });
+
+      // Update Dashboard Header button label
+      const dashLabel = document.getElementById('dashboard-header-label');
+      if (role === 'customer') dashLabel.innerText = "My Rescues";
+      if (role === 'business') dashLabel.innerText = "Partner Portal";
+      if (role === 'ngo') dashLabel.innerText = "NGO Hub";
+      if (role === 'admin') dashLabel.innerText = "Admin Desk";
+
+      showToast(`Switched persona to: ${role.toUpperCase()}`, '👤');
+      renderDashboards();
+    }
+
+    function openCurrentDashboard() {
+      if (state.role === 'customer') navigateTo('customer-dashboard');
+      if (state.role === 'business') navigateTo('restaurant-dashboard');
+      if (state.role === 'ngo') navigateTo('ngo-dashboard');
+      if (state.role === 'admin') navigateTo('admin-dashboard');
+    }
+
+    // HOW IT WORKS TABS
+    function setHowItWorksTab(tab) {
+      const cTab = document.getElementById('hiw-tab-citizens');
+      const bTab = document.getElementById('hiw-tab-businesses');
+      const cContent = document.getElementById('hiw-content-citizens');
+      const bContent = document.getElementById('hiw-content-businesses');
+
+      if (tab === 'citizens') {
+        cTab.className = "px-5 py-2 rounded-lg text-xs font-bold bg-white text-brand-700 shadow-sm transition";
+        bTab.className = "px-5 py-2 rounded-lg text-xs font-bold text-stone-600 hover:text-stone-900 transition";
+        cContent.classList.remove('hidden');
+        bContent.classList.add('hidden');
+      } else {
+        bTab.className = "px-5 py-2 rounded-lg text-xs font-bold bg-white text-amber-800 shadow-sm transition";
+        cTab.className = "px-5 py-2 rounded-lg text-xs font-bold text-stone-600 hover:text-stone-900 transition";
+        bContent.classList.remove('hidden');
+        cContent.classList.add('hidden');
+      }
+    }
+
+    // IMPACT CALCULATOR
+    function calculateImpact(val) {
+      document.getElementById('calc-slider-val').innerText = `${val} Meal${val > 1 ? 's' : ''} / week`;
+      const yearlyMeals = val * 52;
+      const yearlySavings = yearlyMeals * 120; // Avg saving ₹120 per rescue
+      const co2Kg = Math.round(yearlyMeals * 1.8);
+      const waterL = yearlyMeals * 420;
+      const trees = Math.round(co2Kg / 20);
+
+      document.getElementById('calc-money-saved').innerText = `₹${yearlySavings.toLocaleString('en-IN')}`;
+      document.getElementById('calc-co2-saved').innerText = `${co2Kg} kg`;
+      document.getElementById('calc-water-saved').innerText = `${waterL.toLocaleString('en-IN')} L`;
+      document.getElementById('calc-trees-equiv').innerText = `${trees} Trees`;
+    }
+
+    // FLASH DEALS RENDER
+    function renderFlashDeals() {
+      const container = document.getElementById('flash-deals-container');
+      if (!container) return;
+
+      const deals = state.foodItems.filter(item => item.category !== 'NGO Bulk').slice(0, 4);
+      container.innerHTML = deals.map(item => {
+        const discount = Math.round(((item.origPrice - item.rescuePrice) / item.origPrice) * 100);
+        return `
+          <div class="bg-white rounded-3xl p-4 border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div>
+              <div class="relative h-44 rounded-2xl overflow-hidden mb-3">
+                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <span class="absolute top-2.5 left-2.5 bg-accent-orange text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow">
+                  ${discount}% OFF
+                </span>
+                <span class="absolute bottom-2.5 right-2.5 bg-stone-900/80 backdrop-blur-md text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1">
+                  <i data-lucide="clock" class="w-3 h-3"></i> Ends ${item.pickupEnd}
+                </span>
+              </div>
+
+              <div class="text-[11px] font-bold text-stone-400 mb-1 flex items-center justify-between">
+                <span>${item.restaurant}</span>
+                <span class="text-amber-500 flex items-center gap-0.5">⭐ ${item.rating}</span>
+              </div>
+              <h4 class="font-extrabold text-stone-900 text-sm line-clamp-1 mb-1">${item.title}</h4>
+              <p class="text-[11px] text-stone-500 line-clamp-2">${item.description}</p>
+            </div>
+
+            <div class="pt-3 mt-3 border-t border-stone-100 flex items-center justify-between">
+              <div>
+                <span class="text-lg font-black text-brand-700">₹${item.rescuePrice}</span>
+                <span class="text-xs text-stone-400 line-through ml-1">₹${item.origPrice}</span>
+              </div>
+              <button onclick="openFoodDetailsModal('${item.id}')" class="bg-brand-50 hover:bg-brand-100 text-brand-800 font-bold text-xs px-3 py-1.5 rounded-xl border border-brand-200 transition">
+                Reserve
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // MARKETPLACE FILTERS & RENDERING
+    function setCategoryFilter(cat) {
+      state.filterCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-category') === cat) {
+          btn.className = "cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-brand-600 text-white transition shadow-sm font-bold";
+        } else {
+          btn.className = "cat-pill px-3.5 py-2 rounded-xl whitespace-nowrap bg-stone-100 text-stone-700 hover:bg-stone-200 transition font-medium";
+        }
+      });
+      applyFilters();
+    }
+
+    function quickFilterCategory(cat) {
+      navigateTo('browse');
+      setCategoryFilter(cat);
+    }
+
+    function handleCityFilter(city) {
+      state.currentCity = city;
+      document.getElementById('current-city-label').innerText = city;
+      document.getElementById('map-city-header').innerText = city;
+      applyFilters();
+    }
+
+    function handleHeroSearch() {
+      const q = document.getElementById('hero-search-input').value;
+      navigateTo('browse');
+      const marketSearch = document.getElementById('marketplace-search');
+      if (marketSearch) {
+        marketSearch.value = q;
+        applyFilters();
+      }
+    }
+
+    function setViewMode(mode) {
+      state.viewMode = mode;
+      const gridBtn = document.getElementById('view-mode-grid');
+      const mapBtn = document.getElementById('view-mode-map');
+      const gridContainer = document.getElementById('marketplace-grid');
+      const mapContainer = document.getElementById('marketplace-map-container');
+
+      if (mode === 'grid') {
+        gridBtn.className = "px-3 py-1.5 rounded-lg bg-white text-brand-700 shadow-sm flex items-center gap-1.5 transition";
+        mapBtn.className = "px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 flex items-center gap-1.5 transition";
+        gridContainer.classList.remove('hidden');
+        mapContainer.classList.add('hidden');
+      } else {
+        mapBtn.className = "px-3 py-1.5 rounded-lg bg-white text-brand-700 shadow-sm flex items-center gap-1.5 transition";
+        gridBtn.className = "px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 flex items-center gap-1.5 transition";
+        mapContainer.classList.remove('hidden');
+        gridContainer.classList.add('hidden');
+        renderMapPins();
+      }
+      lucide.createIcons();
+    }
+
+    function applyFilters() {
+      const searchQuery = (document.getElementById('marketplace-search')?.value || '').toLowerCase();
+      const maxPrice = parseFloat(document.getElementById('price-slider')?.value || 500);
+      const sortOrder = document.getElementById('sort-select')?.value || 'expiring';
+      
+      const checkedDietary = Array.from(document.querySelectorAll('.dietary-cb:checked')).map(cb => cb.value);
+
+      let filtered = state.foodItems.filter(item => {
+        // Search text
+        const matchesSearch = item.title.toLowerCase().includes(searchQuery) ||
+                              item.restaurant.toLowerCase().includes(searchQuery) ||
+                              item.category.toLowerCase().includes(searchQuery);
+        
+        // Category
+        const matchesCat = (state.filterCategory === 'All') || (item.category === state.filterCategory);
+
+        // Price
+        const matchesPrice = item.rescuePrice <= maxPrice;
+
+        // Dietary
+        const matchesDietary = checkedDietary.includes(item.dietary);
+
+        return matchesSearch && matchesCat && matchesPrice && matchesDietary;
+      });
+
+      // Sorting
+      if (sortOrder === 'price_low') {
+        filtered.sort((a, b) => a.rescuePrice - b.rescuePrice);
+      } else if (sortOrder === 'discount') {
+        filtered.sort((a, b) => ((b.origPrice - b.rescuePrice)/b.origPrice) - ((a.origPrice - a.rescuePrice)/a.origPrice));
+      } else if (sortOrder === 'rating') {
+        filtered.sort((a, b) => b.rating - a.rating);
+      }
+
+      // Render Results
+      document.getElementById('results-count').innerText = filtered.length;
+      const grid = document.getElementById('marketplace-grid');
+      const empty = document.getElementById('empty-state');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+      } else {
+        empty.classList.add('hidden');
+        grid.innerHTML = filtered.map(item => {
+          const discount = Math.round(((item.origPrice - item.rescuePrice) / item.origPrice) * 100);
+          const isFreeNgo = item.rescuePrice === 0;
+          return `
+            <div class="bg-white rounded-3xl p-4 border border-stone-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div class="relative h-48 rounded-2xl overflow-hidden mb-3.5">
+                  <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  
+                  <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                    <span class="${isFreeNgo ? 'bg-blue-600' : 'bg-accent-orange'} text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow">
+                      ${isFreeNgo ? 'FREE NGO DONATION' : `${discount}% OFF`}
+                    </span>
+                    <span class="bg-white/90 backdrop-blur-md text-stone-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+                      ${item.dietary === 'Veg' ? '🟢 Pure Veg' : item.dietary === 'Non-Veg' ? '🔴 Non-Veg' : '🌿 Vegan'}
+                    </span>
+                  </div>
+
+                  <span class="absolute bottom-2.5 right-2.5 bg-stone-900/80 backdrop-blur-md text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    <i data-lucide="clock" class="w-3 h-3"></i> Pickup: ${item.pickupStart} - ${item.pickupEnd}
+                  </span>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold mb-1">
+                  <span class="text-stone-600 font-bold">${item.restaurant}</span>
+                  <span class="flex items-center gap-1 text-amber-500">⭐ ${item.rating}</span>
+                </div>
+
+                <h4 class="font-extrabold text-stone-900 text-sm line-clamp-1 mb-1">${item.title}</h4>
+                <p class="text-xs text-stone-500 line-clamp-2 mb-2">${item.description}</p>
+                
+                <div class="text-[11px] text-stone-400 font-medium flex items-center gap-1">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-stone-400"></i>
+                  <span>${item.location} • ${item.distance}</span>
+                </div>
+              </div>
+
+              <div class="pt-3 mt-3 border-t border-stone-100 flex items-center justify-between">
+                <div>
+                  <span class="text-xl font-black ${isFreeNgo ? 'text-blue-700' : 'text-brand-700'}">${isFreeNgo ? '₹0' : '₹' + item.rescuePrice}</span>
+                  ${!isFreeNgo ? `<span class="text-xs text-stone-400 line-through ml-1.5">₹${item.origPrice}</span>` : ''}
+                  <div class="text-[10px] text-amber-600 font-bold">${item.qty} bag${item.qty > 1 ? 's' : ''} left</div>
+                </div>
+                <button onclick="openFoodDetailsModal('${item.id}')" class="bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow transition">
+                  ${isFreeNgo ? 'Claim Bulk' : 'Reserve'}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      lucide.createIcons();
+    }
+
+    function resetFilters() {
+      if (document.getElementById('marketplace-search')) document.getElementById('marketplace-search').value = '';
+      if (document.getElementById('price-slider')) document.getElementById('price-slider').value = 300;
+      if (document.getElementById('price-filter-display')) document.getElementById('price-filter-display').innerText = '₹300';
+      setCategoryFilter('All');
+    }
+
+    // MAP PINS RENDERING
+    function renderMapPins() {
+      const container = document.getElementById('map-pins-container');
+      if (!container) return;
+
+      container.innerHTML = state.foodItems.map(item => `
+        <div class="map-pin absolute cursor-pointer" style="left: ${item.mapCoords.x}%; top: ${item.mapCoords.y}%;" onclick="selectMapPin('${item.id}')">
+          <div class="bg-brand-600 text-white p-2 rounded-2xl shadow-xl flex items-center gap-1.5 border-2 border-white hover:bg-stone-900 transition">
+            <span class="text-xs">🥘</span>
+            <span class="text-xs font-black">₹${item.rescuePrice}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectMapPin(itemId) {
+      const item = state.foodItems.find(i => i.id === itemId);
+      if (!item) return;
+
+      const popover = document.getElementById('map-selected-popover');
+      popover.innerHTML = `
+        <div class="flex items-center gap-3">
+          <img src="${item.image}" class="w-12 h-12 rounded-xl object-cover" />
+          <div>
+            <div class="text-xs font-bold text-stone-900 line-clamp-1">${item.title}</div>
+            <div class="text-[10px] text-stone-500">${item.restaurant} • ${item.distance}</div>
+            <div class="text-xs font-black text-brand-700 mt-0.5">₹${item.rescuePrice} <span class="line-through text-stone-400 font-normal">₹${item.origPrice}</span></div>
+          </div>
+        </div>
+        <button onclick="openFoodDetailsModal('${item.id}')" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs py-2 rounded-xl mt-2 transition">
+          Reserve This Item
+        </button>
+      `;
+      popover.classList.remove('hidden');
+    }
+
+    // FOOD DETAILS MODAL & RESERVATION TRIGGER
+    function openFoodDetailsModal(itemId) {
+      const item = state.foodItems.find(i => i.id === itemId);
+      if (!item) return;
+
+      const discount = Math.round(((item.origPrice - item.rescuePrice) / item.origPrice) * 100);
+      const isFreeNgo = item.rescuePrice === 0;
+
+      const content = document.getElementById('modal-food-content');
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div class="relative h-56 rounded-2xl overflow-hidden">
+            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover" />
+            <span class="absolute top-3 left-3 ${isFreeNgo ? 'bg-blue-600' : 'bg-accent-orange'} text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">
+              ${isFreeNgo ? 'FREE NGO DONATION' : `${discount}% OFF (Save ₹${item.origPrice - item.rescuePrice})`}
+            </span>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between text-xs text-stone-400 font-bold mb-1">
+              <span>${item.restaurant}</span>
+              <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">${item.hygieneScore}</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-stone-900">${item.title}</h3>
+            <p class="text-xs text-stone-600 mt-2 leading-relaxed">${item.description}</p>
+          </div>
+
+          <div class="bg-cream-100 p-4 rounded-2xl border border-stone-200 grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="text-stone-500 font-medium">Pickup Window:</span>
+              <div class="font-bold text-stone-900 mt-0.5">${item.pickupStart} - ${item.pickupEnd}</div>
+            </div>
+            <div>
+              <span class="text-stone-500 font-medium">Location:</span>
+              <div class="font-bold text-stone-900 mt-0.5 line-clamp-1">${item.location}</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <div>
+              <span class="text-2xl font-black text-brand-700">₹${item.rescuePrice}</span>
+              ${!isFreeNgo ? `<span class="text-sm text-stone-400 line-through ml-2">₹${item.origPrice}</span>` : ''}
+              <div class="text-xs text-stone-500 font-medium mt-0.5">Pay at store during pickup</div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="confirmReservation('${item.id}')" class="bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs px-6 py-3.5 rounded-xl shadow-lg transition">
+                Confirm & Get QR Pass
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      openModal('food-details-modal');
+      lucide.createIcons();
+    }
+
+    function openQuickReserve(itemId) {
+      openFoodDetailsModal(itemId);
+    }
+
+    // CONFIRM RESERVATION & GENERATE DYNAMIC QR PASS
+    function confirmReservation(itemId) {
+      const item = state.foodItems.find(i => i.id === itemId);
+      if (!item || item.qty <= 0) {
+        showToast('Sorry, this surplus bag is sold out!', '⚠️');
+        return;
+      }
+
+      // Deduct inventory
+      item.qty -= 1;
+
+      // Create new Reservation
+      const reservationId = `FR-BLR-${Math.floor(10000 + Math.random() * 90000)}`;
+      const newRes = {
+        id: reservationId,
+        itemId: item.id,
+        itemTitle: item.title,
+        restaurant: item.restaurant,
+        qty: 1,
+        totalPrice: item.rescuePrice,
+        pickupWindow: `${item.pickupStart} - ${item.pickupEnd}`,
+        status: 'Active',
+        reservedAt: new Date().toISOString()
+      };
+
+      state.reservations.unshift(newRes);
+      saveState();
+
+      // Trigger Confetti
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      // Update UI in confirmation modal
+      closeModal('food-details-modal');
+      document.getElementById('conf-order-id').innerText = reservationId;
+      document.getElementById('conf-item-title').innerText = item.title;
+      document.getElementById('conf-restaurant-title').innerText = item.restaurant;
+      document.getElementById('conf-pickup-window').innerText = `${item.pickupStart} - ${item.pickupEnd}`;
+      document.getElementById('conf-total-price').innerText = `₹${item.rescuePrice}`;
+
+      // Generate QR Code Pattern on Canvas
+      drawQRCodeCanvas('qr-canvas', reservationId);
+
+      openModal('booking-confirmation-modal');
+      renderDashboards();
+      updateHeaderBadge();
+      applyFilters();
+      renderFlashDeals();
+    }
+
+    // CANVAS QR CODE GENERATOR (Vector Matrix simulation)
+    function drawQRCodeCanvas(canvasId, text) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const size = 180;
+      const cells = 18;
+      const cellSize = size / cells;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+
+      // Seed pseudo random from string
+      let seed = 0;
+      for (let i = 0; i < text.length; i++) seed += text.charCodeAt(i);
+
+      ctx.fillStyle = '#064e3b';
+
+      // Corner Markers
+      function drawFinder(x, y) {
+        ctx.fillRect(x * cellSize, y * cellSize, 5 * cellSize, 5 * cellSize);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect((x + 1) * cellSize, (y + 1) * cellSize, 3 * cellSize, 3 * cellSize);
+        ctx.fillStyle = '#064e3b';
+        ctx.fillRect((x + 1.5) * cellSize, (y + 1.5) * cellSize, 2 * cellSize, 2 * cellSize);
+      }
+
+      drawFinder(1, 1);
+      drawFinder(12, 1);
+      drawFinder(1, 12);
+
+      // Random Matrix grid based on seed
+      for (let r = 0; r < cells; r++) {
+        for (let c = 0; c < cells; c++) {
+          if ((r < 7 && c < 7) || (r < 7 && c > 10) || (r > 10 && c < 7)) continue;
+          if ((seed * (r + 1) * (c + 1) + (r * c)) % 3 === 0) {
+            ctx.fillRect(c * cellSize, r * cellSize, cellSize - 0.5, cellSize - 0.5);
+          }
+        }
+      }
+    }
+
+    // RENDER DASHBOARDS
+    function renderDashboards() {
+      // 1. Customer Dashboard Active Passes
+      const custActiveContainer = document.getElementById('cust-active-reservations-list');
+      const activeRes = state.reservations.filter(r => r.status === 'Active');
+      document.getElementById('active-res-count-label').innerText = `${activeRes.length} Active`;
+
+      if (custActiveContainer) {
+        if (activeRes.length === 0) {
+          custActiveContainer.innerHTML = `
+            <div class="col-span-2 bg-white p-8 rounded-3xl border border-stone-200 text-center space-y-2">
+              <div class="text-2xl">🌱</div>
+              <h4 class="text-sm font-bold text-stone-800">No active pickup passes right now</h4>
+              <p class="text-xs text-stone-500">Discover fresh surplus meals near you before tonight's closing!</p>
+              <button onclick="navigateTo('browse')" class="bg-brand-600 text-white font-bold text-xs px-4 py-2 rounded-xl mt-2">Explore Surplus Food</button>
+            </div>
+          `;
+        } else {
+          custActiveContainer.innerHTML = activeRes.map(r => `
+            <div class="bg-white p-6 rounded-3xl border-2 border-brand-500 shadow-lg space-y-4 relative overflow-hidden">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider bg-brand-100 text-brand-800 px-2.5 py-1 rounded-full">Ready for Pickup</span>
+                <span class="text-xs font-mono font-bold text-stone-400">${r.id}</span>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-stone-900 text-base">${r.itemTitle}</h4>
+                <p class="text-xs text-stone-500 font-medium">${r.restaurant}</p>
+              </div>
+              <div class="bg-stone-50 p-3 rounded-2xl border border-stone-200 flex items-center justify-between text-xs">
+                <div>
+                  <span class="text-stone-400 text-[10px] font-bold block">PICKUP WINDOW</span>
+                  <span class="font-extrabold text-stone-800">${r.pickupWindow}</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-stone-400 text-[10px] font-bold block">AMOUNT</span>
+                  <span class="font-extrabold text-brand-700 text-sm">₹${r.totalPrice}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 pt-1">
+                <button onclick="showQRCodeDirect('${r.id}', '${r.itemTitle}', '${r.restaurant}', '${r.pickupWindow}', ${r.totalPrice})" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs py-2.5 rounded-xl shadow transition flex items-center justify-center gap-1.5">
+                  <i data-lucide="qr-code" class="w-4 h-4"></i>
+                  <span>Show Pickup QR Pass</span>
+                </button>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Customer Past History Table
+      const histTable = document.getElementById('cust-past-history-tbody');
+      if (histTable) {
+        histTable.innerHTML = state.reservations.map(r => `
+          <tr class="hover:bg-stone-50 transition">
+            <td class="py-3 font-mono font-bold text-stone-900">${r.id}</td>
+            <td class="py-3">
+              <div class="font-bold text-stone-900">${r.itemTitle}</div>
+              <div class="text-[11px] text-stone-400">${r.restaurant}</div>
+            </td>
+            <td class="py-3">${r.qty}</td>
+            <td class="py-3 font-bold text-brand-700">₹${r.totalPrice}</td>
+            <td class="py-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'Active' ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'}">
+                ${r.status}
+              </span>
+            </td>
+            <td class="py-3 text-right">
+              <button onclick="showToast('Receipt downloaded for ' + '${r.id}', '📄')" class="text-brand-600 hover:text-brand-800 font-bold text-[11px]">Download</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 2. Restaurant Partner Orders & Listings
+      const partnerOrders = document.getElementById('partner-orders-tbody');
+      const partnerListings = document.getElementById('partner-listings-grid');
+      document.getElementById('partner-orders-count').innerText = `${state.reservations.length} total orders`;
+
+      if (partnerOrders) {
+        partnerOrders.innerHTML = state.reservations.map(r => `
+          <tr class="hover:bg-stone-50 transition">
+            <td class="py-3 font-mono font-bold text-stone-900">${r.id}</td>
+            <td class="py-3 font-bold text-stone-800">${r.itemTitle}</td>
+            <td class="py-3 font-bold">${r.qty}</td>
+            <td class="py-3 font-bold text-brand-700">₹${r.totalPrice}</td>
+            <td class="py-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'Active' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                ${r.status === 'Active' ? 'Pending Pickup' : 'Completed ✓'}
+              </span>
+            </td>
+            <td class="py-3 text-right">
+              ${r.status === 'Active' ? `
+                <button onclick="partnerMarkCompleted('${r.id}')" class="bg-stone-900 hover:bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-lg transition">
+                  Mark Collected
+                </button>
+              ` : '<span class="text-stone-400 text-[10px]">Verified</span>'}
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      if (partnerListings) {
+        partnerListings.innerHTML = state.foodItems.slice(0, 3).map(item => `
+          <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-brand-800 bg-brand-100 px-2 py-0.5 rounded">${item.category}</span>
+              <span class="text-xs font-bold text-amber-600">${item.qty} in stock</span>
+            </div>
+            <h5 class="font-extrabold text-stone-900 text-xs">${item.title}</h5>
+            <div class="flex items-center justify-between text-xs font-bold pt-2 border-t border-stone-200">
+              <span class="text-brand-700">₹${item.rescuePrice} <span class="text-stone-400 line-through text-[10px]">₹${item.origPrice}</span></span>
+              <button onclick="showToast('Listing updated', '✓')" class="text-stone-500 hover:text-stone-800 text-[10px]">Edit</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // 3. NGO Bulk Listings
+      const ngoContainer = document.getElementById('ngo-bulk-listings');
+      if (ngoContainer) {
+        const bulkItems = state.foodItems.filter(i => i.category === 'NGO Bulk');
+        ngoContainer.innerHTML = bulkItems.map(item => `
+          <div class="bg-white p-6 rounded-3xl border-2 border-blue-500 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase bg-blue-100 text-blue-900 px-3 py-1 rounded-full">₹0 Free NGO Bulk Food</span>
+              <span class="text-xs font-bold text-stone-400">${item.distance} away</span>
+            </div>
+            <div>
+              <h4 class="text-lg font-extrabold text-stone-900">${item.title}</h4>
+              <p class="text-xs text-stone-600 mt-1">${item.description}</p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-2xl text-xs space-y-1">
+              <div class="font-bold text-blue-900">Donor: ${item.restaurant}</div>
+              <div class="text-blue-700">Address: ${item.location}</div>
+              <div class="text-blue-800 font-bold">Pickup Time: ${item.pickupStart} - ${item.pickupEnd}</div>
+            </div>
+            <button onclick="confirmReservation('${item.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3 rounded-xl shadow transition">
+              Dispatch Volunteer & Claim Bulk Food
+            </button>
+          </div>
+        `).join('');
+      }
+
+      // 4. Admin KYC Queue & Logs
+      const adminKYC = document.getElementById('admin-kyc-queue');
+      if (adminKYC) {
+        adminKYC.innerHTML = `
+          <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-bold text-stone-900">Sweet Delights Patisserie</div>
+              <div class="text-[11px] text-stone-500">Koramangala • FSSAI License #1122334455</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="showToast('Partner Approved!', '✓'); this.parentElement.parentElement.remove()" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px]">Approve</button>
+              <button onclick="this.parentElement.parentElement.remove()" class="bg-stone-200 text-stone-700 font-bold px-2 py-1.5 rounded-lg text-[10px]">Reject</button>
+            </div>
+          </div>
+          <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-bold text-stone-900">Green Leaf Organic Mart</div>
+              <div class="text-[11px] text-stone-500">Bandra West, Mumbai • GST verified</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="showToast('Partner Approved!', '✓'); this.parentElement.parentElement.remove()" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px]">Approve</button>
+              <button onclick="this.parentElement.parentElement.remove()" class="bg-stone-200 text-stone-700 font-bold px-2 py-1.5 rounded-lg text-[10px]">Reject</button>
+            </div>
+          </div>
+        `;
+      }
+
+      const adminLogs = document.getElementById('admin-activity-log');
+      if (adminLogs) {
+        adminLogs.innerHTML = `
+          <div class="text-xs p-2 rounded-lg bg-stone-50 border border-stone-100 flex items-center justify-between">
+            <span>⚡ User <strong>Ananya K.</strong> reserved 1x Sourdough Box from <em>French Crust</em></span>
+            <span class="text-[10px] text-stone-400">2m ago</span>
+          </div>
+          <div class="text-xs p-2 rounded-lg bg-stone-50 border border-stone-100 flex items-center justify-between">
+            <span>🍞 Partner <strong>Royal Biryani</strong> posted 4 surplus boxes at 69% off</span>
+            <span class="text-[10px] text-stone-400">12m ago</span>
+          </div>
+          <div class="text-xs p-2 rounded-lg bg-stone-50 border border-stone-100 flex items-center justify-between">
+            <span>🤝 NGO <strong>Hope India</strong> picked up 100 meals from Grand Palace</span>
+            <span class="text-[10px] text-stone-400">45m ago</span>
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    function updateHeaderBadge() {
+      const count = state.reservations.filter(r => r.status === 'Active').length;
+      const badge = document.getElementById('active-res-badge');
+      if (badge) {
+        if (count > 0) {
+          badge.innerText = count;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+    }
+
+    function showQRCodeDirect(orderId, title, restaurant, windowTime, price) {
+      document.getElementById('conf-order-id').innerText = orderId;
+      document.getElementById('conf-item-title').innerText = title;
+      document.getElementById('conf-restaurant-title').innerText = restaurant;
+      document.getElementById('conf-pickup-window').innerText = windowTime;
+      document.getElementById('conf-total-price').innerText = `₹${price}`;
+      drawQRCodeCanvas('qr-canvas', orderId);
+      openModal('booking-confirmation-modal');
+    }
+
+    // PARTNER QR & OTP VERIFIER
+    function verifyPartnerPickup() {
+      const code = document.getElementById('partner-otp-input').value.trim().toUpperCase();
+      const statusDiv = document.getElementById('partner-verify-status');
+      
+      const target = state.reservations.find(r => r.id.toUpperCase() === code);
+      if (target) {
+        target.status = 'Completed';
+        saveState();
+        statusDiv.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-100 text-emerald-800 block";
+        statusDiv.innerHTML = `✓ Verification Successful! Order <strong>${code}</strong> marked as Picked Up.`;
+        renderDashboards();
+        showToast(`Order ${code} verified!`, '✓');
+      } else {
+        statusDiv.className = "p-3 rounded-xl text-xs font-semibold bg-red-100 text-red-800 block";
+        statusDiv.innerHTML = `⚠️ Reservation ID not found. Please re-check the 6-digit code.`;
+      }
+    }
+
+    function partnerMarkCompleted(resId) {
+      const target = state.reservations.find(r => r.id === resId);
+      if (target) {
+        target.status = 'Completed';
+        saveState();
+        renderDashboards();
+        showToast(`Order ${resId} marked collected!`, '✓');
+      }
+    }
+
+    // POST SURPLUS FOOD HANDLER
+    function openPostFoodModal() {
+      openModal('post-food-modal');
+    }
+
+    function handlePostSurplusSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('post-title').value;
+      const category = document.getElementById('post-category').value;
+      const dietary = document.getElementById('post-dietary').value;
+      const origPrice = parseFloat(document.getElementById('post-orig-price').value);
+      const rescuePrice = parseFloat(document.getElementById('post-rescue-price').value);
+      const qty = parseInt(document.getElementById('post-qty').value);
+      const pickupStart = document.getElementById('post-pickup-start').value;
+      const pickupEnd = document.getElementById('post-pickup-end').value;
+      const image = document.getElementById('post-image-preset').value;
+
+      const newItem = {
+        id: `item-${Date.now()}`,
+        title,
+        restaurant: "The French Crust Bakery",
+        category,
+        dietary,
+        city: "Bengaluru",
+        location: "100ft Road, Indiranagar, Bengaluru",
+        distance: "1.5 km",
+        rating: 5.0,
+        reviewsCount: 1,
+        origPrice,
+        rescuePrice,
+        qty,
+        pickupStart,
+        pickupEnd,
+        image,
+        description: `Fresh daily surplus listed directly by the store manager. Sealed and FSSAI hygiene compliant.`,
+        mapCoords: { x: Math.floor(20 + Math.random() * 60), y: Math.floor(20 + Math.random() * 60) },
+        hygieneScore: "5-Star FSSAI Verified"
+      };
+
+      state.foodItems.unshift(newItem);
+      saveState();
+
+      closeModal('post-food-modal');
+      showToast('Surplus food published to Marketplace!', '🎉');
+      applyFilters();
+      renderFlashDeals();
+      renderDashboards();
+    }
+
+    // ADMIN SIMULATION
+    function simulateNewListingAlert() {
+      showToast('New surplus batch listed in Indiranagar!', '⚡');
+    }
+
+    // MODAL HELPERS
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.add('hidden');
+    }
+
+    // TOAST HELPER
+    function showToast(msg, icon = '✨') {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      document.getElementById('toast-icon').innerText = icon;
+      t.classList.remove('translate-y-24', 'opacity-0');
+      setTimeout(() => {
+        t.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
+    }
+  </script>
+
+</body>
+</html>
